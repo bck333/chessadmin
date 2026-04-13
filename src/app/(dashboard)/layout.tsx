@@ -16,11 +16,11 @@ import {
 } from 'lucide-react';
 
 const menuItems = [
-  { name: 'Dashboard', icon: LayoutDashboard, href: '/admin' },
-  { name: 'Puzzles', icon: Puzzle, href: '/admin/puzzles' },
-  { name: 'Users', icon: Users, href: '/admin/users' },
-  { name: 'Categories', icon: Tags, href: '/admin/categories' },
-  { name: 'Settings', icon: Settings, href: '/admin/settings' },
+  { name: 'Dashboard', icon: LayoutDashboard, href: '/' },
+  { name: 'Puzzles', icon: Puzzle, href: '/puzzles' },
+  { name: 'Users', icon: Users, href: '/users' },
+  { name: 'Categories', icon: Tags, href: '/categories' },
+  { name: 'Settings', icon: Settings, href: '/settings' },
 ];
 
 export default function AdminLayout({
@@ -64,7 +64,7 @@ export default function AdminLayout({
         {/* Navigation */}
         <nav className="flex-1 p-4 space-y-1">
           {menuItems.map((item) => {
-            const isActive = pathname === item.href || (item.href !== '/admin' && pathname?.startsWith(item.href));
+            const isActive = pathname === item.href || (item.href !== '/' && pathname?.startsWith(item.href));
             return (
               <Link
                 key={item.name}

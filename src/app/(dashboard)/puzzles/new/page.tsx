@@ -3,14 +3,11 @@
 import React, { useEffect, useState } from 'react';
 import { ChessboardEditor } from '@/components/ChessboardEditor';
 import { puzzleApi, categoryApi } from '@/lib/api';
-import { useRouter, useParams } from 'next/navigation';
-import { ArrowLeft, Save, Tag as TagIcon, X, RefreshCw, Activity, FileText, Clipboard } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { ArrowLeft, Save, Tag as TagIcon, X, RefreshCw, Activity, ChevronRight, FileText, Clipboard } from 'lucide-react';
 
-export default function EditPuzzlePage() {
+export default function NewPuzzlePage() {
   const router = useRouter();
-  const params = useParams();
-  const id = params.id as string;
-
   const [fen, setFen] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -19,7 +16,6 @@ export default function EditPuzzlePage() {
   const [lastMove, setLastMove] = useState('');
   const [solutionMoves, setSolutionMoves] = useState('');
   const [loading, setLoading] = useState(false);
-  const [dataLoading, setDataLoading] = useState(true);
   const [categories, setCategories] = useState<any[]>([]);
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([]);
   const [showCatDropdown, setShowCatDropdown] = useState(false);
@@ -37,10 +33,7 @@ export default function EditPuzzlePage() {
 
   useEffect(() => {
     loadCategories();
-    if (id) {
-      loadPuzzle(id);
-    }
-  }, [id]);
+  }, []);
 
   const loadCategories = async () => {
     try {
@@ -48,50 +41,6 @@ export default function EditPuzzlePage() {
       setCategories(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error('Failed to load categories:', error);
-    }
-  };
-
-  const loadPuzzle = async (puzzleId: string) => {
-    try {
-      setDataLoading(true);
-      const data = await puzzleApi.get(puzzleId);
-      if (data) {
-        setTitle(data.title || '');
-        setDescription(data.description || '');
-        setFen(data.fen || '');
-        setDifficulty(data.difficulty || 'Medium');
-        setRating(data.rating || 1500);
-        setLastMove(data.lastMove || '');
-        
-        if (data.solution_moves && Array.isArray(data.solution_moves)) {
-          setSolutionMoves(data.solution_moves.join(', '));
-          setRecordedMoves(data.solution_moves);
-        } else if (typeof data.solution_moves === 'string') {
-          setSolutionMoves(data.solution_moves);
-          setRecordedMoves(data.solution_moves.split(',').map((m: string) => m.trim()));
-        }
-
-        setOpening(data.opening || '');
-        setEco(data.eco || '');
-        setWhite(data.white || '');
-        setBlack(data.black || '');
-        setYear(data.year || new Date().getFullYear());
-        setSource(data.source || '');
-        
-        if (data.category_ids) {
-            setSelectedCategoryIds(data.category_ids);
-        } else if (data.themes) {
-            // Attempt to map string themes back to category IDs if needed,
-            // though themes is typically joined with category data
-            // Usually, standard update needs category_ids.
-        }
-      }
-    } catch (error) {
-      console.error('Failed to load puzzle details:', error);
-      alert('Failed to load puzzle. It might have been deleted.');
-      router.push('/admin/puzzles');
-    } finally {
-      setDataLoading(false);
     }
   };
 
@@ -128,9 +77,10 @@ export default function EditPuzzlePage() {
     setLoading(true);
 
     try {
+      // Split solution moves by comma and trim
       const moves = solutionMoves.split(',').map(m => m.trim()).filter(m => m !== '');
       
-      await puzzleApi.update(id, {
+      await puzzleApi.create({
         title,
         description,
         fen,
@@ -147,30 +97,22 @@ export default function EditPuzzlePage() {
         category_ids: selectedCategoryIds,
       });
 
-      router.push('/admin/puzzles');
+      router.push('/puzzles');
     } catch (error) {
-      console.error('Failed to update puzzle:', error);
-      alert('Failed to update puzzle');
+      console.error('Failed to create puzzle:', error);
+      alert('Failed to save puzzle');
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleCategory = (categoryId: string) => {
-    if (selectedCategoryIds.includes(categoryId)) {
-      setSelectedCategoryIds(selectedCategoryIds.filter(i => i !== categoryId));
+  const toggleCategory = (id: string) => {
+    if (selectedCategoryIds.includes(id)) {
+      setSelectedCategoryIds(selectedCategoryIds.filter(i => i !== id));
     } else {
-      setSelectedCategoryIds([...selectedCategoryIds, categoryId]);
+      setSelectedCategoryIds([...selectedCategoryIds, id]);
     }
   };
-
-  if (dataLoading) {
-    return (
-      <div className="flex justify-center items-center h-96">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-slate-100 border-b-blue-600"></div>
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
@@ -183,14 +125,16 @@ export default function EditPuzzlePage() {
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Edit Puzzle: {title || id.slice(-8).toUpperCase()}</h1>
-            <p className="text-slate-500 font-medium italic">Make changes to the puzzle details</p>
+            <h1 className="text-3xl font-black text-slate-900 tracking-tight">Professional Puzzle Studio</h1>
+            <p className="text-slate-500 font-medium italic">FIDE Standard Metadata & PGN Integration</p>
           </div>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+        {/* Left column: Chessboard & Importer */}
         <div className="lg:col-span-3 space-y-6">
+          {/* PGN Importer Card */}
           <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-3xl border border-slate-700 shadow-xl relative overflow-hidden group">
             <div className="relative z-10">
               <h2 className="text-xl font-black mb-4 flex items-center gap-2 text-white uppercase tracking-wider text-xs">
@@ -212,6 +156,7 @@ export default function EditPuzzlePage() {
                 Auto-fill Metadata
               </button>
             </div>
+            {/* Background pattern */}
             <div className="absolute -right-4 -bottom-4 opacity-5 pointer-events-none transform rotate-12">
                <FileText size={200} className="text-white" />
             </div>
@@ -236,6 +181,7 @@ export default function EditPuzzlePage() {
               onLastMoveChange={setLastMove}
             />
             
+            {/* FEN Preview */}
             <div className="mt-6">
                <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">FEN Notation</label>
                <code className="block bg-slate-50 text-slate-600 p-4 rounded-xl text-xs overflow-x-auto whitespace-nowrap scrollbar-hide font-mono border border-slate-100 italic">
@@ -245,6 +191,7 @@ export default function EditPuzzlePage() {
           </div>
         </div>
 
+        {/* Right column: Form */}
         <div className="lg:col-span-2 space-y-6">
           <form onSubmit={handleSubmit} className="bg-white p-8 rounded-3xl border border-slate-200 shadow-sm space-y-6">
             <h2 className="text-xl font-black mb-6 flex items-center gap-2 text-slate-800 uppercase tracking-wider text-xs">
@@ -374,12 +321,12 @@ export default function EditPuzzlePage() {
                     {selectedCategoryIds.length === 0 ? (
                       <span className="text-slate-400 text-sm italic font-medium">Select categories...</span>
                     ) : (
-                      selectedCategoryIds.map(categoryId => {
-                        const cat = categories.find(c => c.id === categoryId);
+                      selectedCategoryIds.map(id => {
+                        const cat = categories.find(c => c.id === id);
                         return (
-                          <span key={categoryId} className="bg-[#1e293b] text-white px-2.5 py-1 rounded-lg text-[9px] font-black flex items-center gap-1 uppercase tracking-widest">
-                            {cat?.name || 'Loading...'}
-                            <X size={10} className="cursor-pointer" onClick={(e) => { e.stopPropagation(); toggleCategory(categoryId); }} />
+                          <span key={id} className="bg-[#1e293b] text-white px-2.5 py-1 rounded-lg text-[9px] font-black flex items-center gap-1 uppercase tracking-widest">
+                            {cat?.name}
+                            <X size={10} className="cursor-pointer" onClick={(e) => { e.stopPropagation(); toggleCategory(id); }} />
                           </span>
                         );
                       })
@@ -450,7 +397,7 @@ export default function EditPuzzlePage() {
                   ) : (
                     <>
                       <Save size={20} />
-                      Save Changes
+                      Publish Puzzle
                     </>
                   )}
                 </button>

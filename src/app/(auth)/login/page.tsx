@@ -16,7 +16,7 @@ export default function LoginPage() {
     try {
       const data = await authApi.guestLogin(name || 'Admin User');
       localStorage.setItem('token', data.token);
-      router.push('/admin/puzzles');
+      router.push('/puzzles');
     } catch (error) {
       console.error('Login failed:', error);
       alert('Login failed');

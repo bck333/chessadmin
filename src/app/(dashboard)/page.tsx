@@ -51,7 +51,7 @@ export default function AdminDashboard() {
       icon: Puzzle, 
       color: 'bg-blue-600',
       description: 'Active puzzles in the library',
-      href: '/admin/puzzles'
+      href: '/puzzles'
     },
     { 
       name: 'Total Users', 
@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       icon: Users, 
       color: 'bg-purple-600',
       description: 'Registered chess players',
-      href: '/admin/users'
+      href: '/users'
     },
     { 
       name: 'Engine Status', 
@@ -82,14 +82,14 @@ export default function AdminDashboard() {
         </div>
         <div className="flex gap-3">
           <Link 
-            href="/admin/puzzles/new"
+            href="/puzzles/new"
             className="bg-white border border-slate-200 text-slate-700 font-bold py-2.5 px-5 rounded-xl shadow-sm hover:bg-slate-50 flex items-center gap-2 transition-all active:scale-95 text-sm"
           >
             <Plus size={18} />
             Quick Create
           </Link>
           <Link 
-            href="/admin/puzzles"
+            href="/puzzles"
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-blue-100 flex items-center gap-2 transition-all active:scale-95 text-sm"
           >
             Manage Puzzles
@@ -140,7 +140,7 @@ export default function AdminDashboard() {
         <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden min-h-[400px]">
           <div className="px-8 py-6 border-b border-slate-50 flex items-center justify-between">
             <h3 className="text-xl font-extrabold text-slate-800 tracking-tight">Recent Puzzles</h3>
-            <Link href="/admin/puzzles" className="text-blue-600 text-sm font-bold hover:underline flex items-center gap-1 group">
+            <Link href="/puzzles" className="text-blue-600 text-sm font-bold hover:underline flex items-center gap-1 group">
               View All
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
             </Link>

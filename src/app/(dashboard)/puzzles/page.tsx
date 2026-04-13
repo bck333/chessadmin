@@ -68,7 +68,7 @@ export default function PuzzleListPage() {
             />
           </div>
           <Link 
-            href="/admin/puzzles/new"
+            href="/puzzles/new"
             className="bg-[#1e293b] hover:bg-blue-600 text-white font-black py-4 px-8 rounded-2xl shadow-xl shadow-slate-200 flex items-center gap-3 transition-all active:scale-95 text-xs uppercase tracking-[0.1em]"
           >
             <Plus size={20} />
@@ -166,8 +166,8 @@ export default function PuzzleListPage() {
                         </div>
                       </td>
                       <td className="px-6 py-5 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <Link href={`/admin/puzzles/${puzzle.id}/edit`} className="p-2 hover:bg-white hover:text-blue-600 rounded-xl transition-all border border-transparent hover:border-blue-100 hover:shadow-sm text-slate-400">
+                        <div className="flex justify-end gap-2">
+                          <Link href={`/puzzles/${puzzle.id}/edit`} className="p-2 hover:bg-white hover:text-blue-600 rounded-xl transition-all border border-transparent hover:border-blue-100 hover:shadow-sm text-slate-400">
                             <Edit2 size={16} />
                           </Link>
                           <button 
